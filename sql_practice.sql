@@ -26,3 +26,7 @@ AS (
   )
 SELECT COUNT(birth_year)
 FROM births
+-- Show first name, last name, and height of the tallest patient
+SELECT first_name, last_name, height
+FROM patients
+WHERE height = (SELECT MAX(height) FROM patients)
