@@ -1,4 +1,5 @@
 -- https://www.sql-practice.com/
+
 SELECT * FROM patients LIMIT 1;
 -- Show patient id, first name, last name, gender, height where patient is above average patient height
 SELECT patient_id, first_name, last_name, gender, height FROM patients WHERE height > (SELECT AVG(height) FROM patients) LIMIT 10;
