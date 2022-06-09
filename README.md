@@ -10,7 +10,7 @@ I used data from this website to create a database to run my queries. The result
 SELECT date, available, COUNT(available) FROM Calendar GROUP BY date, available ORDER BY date
 ```
 
-[Graph of Airbnb Availabilty by Day of the Week](Airbnb_Availability_by_Day_of_the_Week.png)
+[Graph of Airbnb Availabilty by Day of the Week](images/Airbnb_Availability_by_Day_of_the_Week.png)
 
 ## SQL-Practice.com
 This is a website that makes allows me to create and run queries on a database in the web browser. Their database contains fictitious data about patients in a hospital. Click on the sql_practice.sql file to see the queries with my notes.
