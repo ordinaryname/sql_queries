@@ -1,44 +1,41 @@
 import os
 import pyodbc
+import csv
 
 class Database():
 
     def __init__(self):
+        # connect to database on Database() object creation
+        # username/password supplied through environment variables
+        # as written, function connects to a local ms database hosted in a Docker container
         self.connection = pyodbc.connect("Driver=/usr/local/lib/libmsodbcsql.18.dylib;Server=localhost,1433;Encrypt=no;UID=" + os.environ["PY_DB_UID"] + ";PWD=" + os.environ["PY_DB_PWD"] + ";")
         self.cursor = self.connection.cursor()
+        self.cursor.fast_executemany = True
         self.queries = []
-        self.lines = []
+        self.data = []
 
     def query(self, query, values):
+        # submit query to database
+        # results can be retrieved from Database.cursor
+        # see notes.py for sample queries
         self.queries.append(values)
         if values:
             return self.cursor.execute(query, values)
         else:
             return self.cursor.execute(query)
 
+    def saveToFile(self, url, header, rows):
+        # save sql query results to csv file
+        with open(url, 'w') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(header)
+            csvwriter.writerows(rows)
 
-    def buildCalendar(self, url):
-        self.lines = []
-        q = 'INSERT INTO Calendar VALUES (?,?,?,?,?,?,?);'
-        with open(url, 'r') as listings:
-            while True:
-                l = listings.readline()
-                if not l:
-                    break
-                ls = l.split('"')
-                if len(ls) > 4:
-                    ls[1] = ls[1].replace(',', '')
-                    ls[3] = ls[3].replace(',', '')
-                    s = ''.join(ls)
-                else:
-                    s = l
-                s = s.split(",")
-                try:
-                    self.lines.append((int(s[0]),s[1],s[2],s[3],s[4],int(s[5]),int(s[6].strip())))
-                except:
-                    continue
-        self.cursor.fast_executemany = True
-        #self.cursor.executemany(q, self.lines)
-        #for i in range(1, len(self.lines)):
-            #self.query(q,self.lines[i])
-            #print(i, end="\r")
+    def csv_to_json(self, path):
+        # convert rows in csv file to a list json objects
+        ab = []
+        with open(path, encoding='utf-8') as csvf:
+            csvReader = csv.DictReader(csvf)
+            for row in csvReader:
+                ab.append(row)
+        return ab
